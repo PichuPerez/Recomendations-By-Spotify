@@ -1,42 +1,70 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
+import { loadItem } from '../../services/localStorage'
+import Loading from '../Layout/Loading'
 
 const Playlist = () => {
   const [playlists, setPlaylists] = useState([])
+  const [country, setCountry] = useState('')
+  const token = loadItem('TOKEN')
 
   useEffect(() => {
-    async function fetchData() {
-      const response = await axios({
+    const fetchData = async () => {
+      await axios({
         method: 'get',
-        url: `https://api.spotify.com/v1/browse/featured-playlists`,
-        params: {
-          market: 'MX',
-          limit: '5'
-        },
+        url: `https://api.spotify.com/v1/me`,
         headers: {
-          Authorization: 'Bearer ' + process.env.REACT_APP_API_TOKEN,
+          Authorization: 'Bearer ' + token,
           'Content-Type': 'application/json'
         }
+      }).then(response => {
+        if (response && response.data) {
+          const country = response.data.country
+          setCountry(country)
+          const fetchPlaylists = async () => {
+            const response = await axios({
+              method: 'get',
+              url: `https://api.spotify.com/v1/browse/featured-playlists`,
+              params: {
+                country: country,
+                limit: '10'
+              },
+              headers: {
+                Authorization: 'Bearer ' + token,
+                'Content-Type': 'application/json'
+              }
+            })
+            setPlaylists(response.data.playlists.items)
+          }
+          fetchPlaylists()
+        }
       })
-      console.log(response.data)
-      setPlaylists(response.data.playlists.items)
     }
     fetchData()
   }, [])
-  console.log('Playlists', playlists)
+
+  console.log('playlists', playlists)
+  console.log('country', country)
+
   const recomendedPlaylists =
     playlists && playlists.length > 0
       ? playlists.map(playlist => {
           return (
-            <div className="row mt-3" key={playlist.id}>
+            <div
+              className="row mt-3"
+              key={playlist.id}
+              style={{
+                borderBottom: '2px solid #6c757d'
+              }}
+            >
               <div className="row justify-content-end mr-5">
-                <div className="col">
+                <div className="col mb-3">
                   <img src={playlist.images[0].url}></img>
                 </div>
               </div>
               <div className="col">
-                <div className="row">
+                <div className="row mt-5">
                   <h1>{`${playlist.name}`}</h1>
                 </div>
                 <div className="row">
@@ -44,9 +72,7 @@ const Playlist = () => {
                 </div>
                 <div className="row">
                   <Link to={`/playlist/${playlist.id}`}>
-                    <button className="btn btn-success mt-5">
-                      See playlist
-                    </button>
+                    <button className="btn btn-info mt-5">See playlist</button>
                   </Link>
                 </div>
               </div>
@@ -55,19 +81,23 @@ const Playlist = () => {
         })
       : ''
 
-  return (
-    <div>
+  if (playlists && playlists.length > 0) {
+    return (
       <div className="container">
-        <h3>
-          Here are your playlists recomendations according to your country.
-          ENJOY!!!
-        </h3>
-        <div className="row justify-content-center">
+        <div className="row">
+          <h1>
+            Here are your playlists recomendations according to your country.
+            ENJOY!!!
+          </h1>
+        </div>
+        <div className="row">
           <div className="container">{recomendedPlaylists}</div>
         </div>
       </div>
-    </div>
-  )
+    )
+  } else {
+    return <Loading />
+  }
 }
 
 export default Playlist

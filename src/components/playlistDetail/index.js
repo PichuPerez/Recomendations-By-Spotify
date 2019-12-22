@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
+import { loadItem } from '../../services/localStorage'
+import Loading from '../Layout/Loading'
 
 const PlaylistDetail = props => {
+  const token = loadItem('TOKEN')
   const { params } = props.match
   const [tracks, setTracks] = useState([])
 
@@ -12,7 +15,7 @@ const PlaylistDetail = props => {
         method: 'get',
         url: ` https://api.spotify.com/v1/playlists/${params.id}`,
         headers: {
-          Authorization: 'Bearer ' + process.env.REACT_APP_API_TOKEN,
+          Authorization: 'Bearer ' + token,
           'Content-Type': 'application/json'
         }
       })
@@ -43,22 +46,26 @@ const PlaylistDetail = props => {
         })
       : ''
 
-  return (
-    <div className="container">
-      <table className="table table-dark table-hover">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Image</th>
-            <th scope="col">Name</th>
-            <th scope="col">Artis Name</th>
-            <th scope="col">Popularity</th>
-          </tr>
-        </thead>
-        <tbody>{playlistTracks}</tbody>
-      </table>
-    </div>
-  )
+  if (tracks && tracks.length > 0) {
+    return (
+      <div className="container">
+        <table className="table table-dark table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Image</th>
+              <th scope="col">Name</th>
+              <th scope="col">Artis Name</th>
+              <th scope="col">Popularity</th>
+            </tr>
+          </thead>
+          <tbody>{playlistTracks}</tbody>
+        </table>
+      </div>
+    )
+  } else {
+    return <Loading />
+  }
 }
 
 export default PlaylistDetail

@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import { loadItem } from '../../services/localStorage'
+import Loading from '../Layout/Loading'
 
 const SongDetail = props => {
+  const token = loadItem('TOKEN')
   const { params } = props.match
   const [song, setSong] = useState('')
 
@@ -11,7 +14,7 @@ const SongDetail = props => {
         method: 'get',
         url: `https://api.spotify.com/v1/tracks/${params.id}`,
         headers: {
-          Authorization: 'Bearer ' + process.env.REACT_APP_API_TOKEN,
+          Authorization: 'Bearer ' + token,
           'Content-Type': 'application/json'
         }
       })
@@ -33,22 +36,27 @@ const SongDetail = props => {
   const songArtist = song && song.artists ? song.artists[0].name : ''
   const songDuration =
     song && song.duration_ms ? msToMins(song.duration_ms) : ''
-  return (
-    <div>
-      <div className="row justify-content-center">
-        <h1>{`${songName} | ${songArtist}`}</h1>
+
+  if (song && song.name) {
+    return (
+      <div>
+        <div className="row justify-content-center">
+          <h1>{`${songName} | ${songArtist}`}</h1>
+        </div>
+        <div className="row justify-content-center mt-3">
+          <img src={`${imageURL}`}></img>
+        </div>
+        <div className="row justify-content-center mt-3">
+          <h3>{`Album : ${songAlbum}`}</h3>
+        </div>
+        <div className="row justify-content-center mb-5">
+          <h3>{`Duration : ${songDuration}`}</h3>
+        </div>
       </div>
-      <div className="row justify-content-center mt-3">
-        <img src={`${imageURL}`}></img>
-      </div>
-      <div className="row justify-content-center mt-3">
-        <h3>{`Album : ${songAlbum}`}</h3>
-      </div>
-      <div className="row justify-content-center mb-5">
-        <h3>{`Duration : ${songDuration}`}</h3>
-      </div>
-    </div>
-  )
+    )
+  } else {
+    return <Loading />
+  }
 }
 
 export default SongDetail
