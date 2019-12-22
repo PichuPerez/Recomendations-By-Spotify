@@ -44,9 +44,6 @@ const Playlist = () => {
     fetchData()
   }, [])
 
-  console.log('playlists', playlists)
-  console.log('country', country)
-
   const recomendedPlaylists =
     playlists && playlists.length > 0
       ? playlists.map(playlist => {
@@ -85,10 +82,7 @@ const Playlist = () => {
     return (
       <div className="container">
         <div className="row">
-          <h1>
-            Here are your playlists recomendations according to your country.
-            ENJOY!!!
-          </h1>
+          <h1>{`Editor's pick for ${country} ENJOY!!!`}</h1>
         </div>
         <div className="row">
           <div className="container">{recomendedPlaylists}</div>
