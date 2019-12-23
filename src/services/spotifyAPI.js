@@ -2,7 +2,7 @@ class SpotifyService {
   constructor() {
     this._baseUrl = 'https://accounts.spotify.com/authorize?'
     this._client_id = 'c97d310597574e91b8cdd002b7bb0441'
-    this._redirect_uri = 'http://localhost:3000/callback'
+    this._redirect_uri = 'http://recomendations-spotify.herokuapp.com/callback'
     this._scope = ['user-top-read', 'user-read-email', 'user-read-private']
   }
 
