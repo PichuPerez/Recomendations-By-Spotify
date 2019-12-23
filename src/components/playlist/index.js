@@ -82,7 +82,7 @@ const Playlist = () => {
     return (
       <div className="container">
         <div className="row">
-          <h1>{`Editor's pick for ${country} ENJOY!!!`}</h1>
+          <h1>{`Editor's pick for ${country} enjoy!!!`}</h1>
         </div>
         <div className="row">
           <div className="container">{recomendedPlaylists}</div>

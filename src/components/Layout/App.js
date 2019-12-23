@@ -10,7 +10,8 @@ const App = () => {
   const token = loadItem('TOKEN')
   if (token !== undefined) {
     return (
-      <div style={{ backgroundColor: '#cfe4e7' }}>
+      <div style={{ backgroundColor: '#cfe4e7' }} className="pb-5">
+        <Footer />
         <div
           className="jumbotron jumbotron-fluid justify-content-center"
           style={{ backgroundColor: '#0a4953' }}
@@ -30,7 +31,6 @@ const App = () => {
             )
           })}
         </Switch>
-        <Footer />
       </div>
     )
   } else {
